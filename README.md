@@ -31,7 +31,7 @@
 ```python
 class QAEngineer:
     def __init__(self):
-        self.name        = "Your Name"
+        self.name        = "Julia"
         self.role        = "QA Engineer 🔍"
         self.experience  = "9 years of finding bugs before they find you"
         self.languages   = ["Python 🐍", "JavaScript ⚡"]
@@ -63,11 +63,11 @@ class QAEngineer:
 
 <div align="center">
 
-![GitHub Stats](https://github-readme-stats.vercel.app/api?username=YOUR_USERNAME&show_icons=true&theme=radical&hide_border=true&bg_color=0D1117&title_color=FF6B9D&icon_color=FFD93D&text_color=FFFFFF)
+![GitHub Stats](https://github-readme-stats.vercel.app/api?username=Julia-306&show_icons=true&theme=radical&hide_border=true&bg_color=0D1117&title_color=FF6B9D&icon_color=FFD93D&text_color=FFFFFF)
 
-![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=YOUR_USERNAME&layout=compact&theme=radical&hide_border=true&bg_color=0D1117&title_color=FF6B9D&text_color=FFFFFF)
+![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=Julia-306&layout=compact&theme=radical&hide_border=true&bg_color=0D1117&title_color=FF6B9D&text_color=FFFFFF)
 
-![GitHub Streak](https://streak-stats.demolab.com?user=YOUR_USERNAME&theme=radical&hide_border=true&background=0D1117&ring=FF6B9D&fire=FFD93D&currStreakLabel=FF6B9D)
+![GitHub Streak](https://streak-stats.demolab.com?user=Julia-306&theme=radical&hide_border=true&background=0D1117&ring=FF6B9D&fire=FFD93D&currStreakLabel=FF6B9D)
 
 </div>
 
@@ -105,8 +105,8 @@ const myApproach = {
 
 <div align="center">
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/YOUR_PROFILE)
-[![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/YOUR_TG)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/julia-bacherikova/)
+[![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)]()
 [![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:YOUR_EMAIL)
 
 </div>
@@ -119,7 +119,7 @@ const myApproach = {
 
 > *"A great QA engineer is like a great dog: always finds what's hidden"*
 
-![Visitor Count](https://komarev.com/ghpvc/?username=YOUR_USERNAME&color=FF6B9D&style=for-the-badge&label=VISITORS)
+![Visitor Count](https://komarev.com/ghpvc/?username=Julia-306&color=FF6B9D&style=for-the-badge&label=VISITORS)
 
 **Made with ❤️, Python & paws 🐾**
 
