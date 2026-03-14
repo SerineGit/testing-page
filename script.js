@@ -1,7 +1,7 @@
 (function(){
 
 // ─────────────────────────────────────────
-// settings JSONBin
+// НАСТРОЙКИ JSONBin
 // ─────────────────────────────────────────
 var JSONBIN_ID  = '69b4bf17c3097a1dd523132d';
 var JSONBIN_KEY = '$2a$10$0GPaIJrOvPUYtRsyx6N7zeJ9j6zm7nNDDv8gaiAKESR6cQ8PAWZOG';
@@ -21,10 +21,10 @@ var C=[
 var AV=[['#FF6B6B','#FF8E53'],['#667EEA','#764BA2'],['#11998E','#38EF7D'],['#F093FB','#F5576C'],['#4FACFE','#00F2FE'],['#43E97B','#38F9D7'],['#FA709A','#FEE140'],['#A18CD1','#FBC2EB'],['#FDA085','#F6D365'],['#84FAB0','#8FD3F4'],['#F77062','#FE5196'],['#30CFD0','#667EEA']];
 
 var chats=[], cur=null, ps='elio', pt='', eo=false;
-var lastSnapshot='', saving=false;
+var lastSnapshot='', saving=false, saveConfirmed=false;
 
 // ─────────────────────────────────────────
-// JSONBin: read
+// JSONBin: читаем — сравниваем по содержимому
 // ─────────────────────────────────────────
 async function lv(){
   try {
@@ -32,7 +32,7 @@ async function lv(){
       headers: { 'X-Master-Key': JSONBIN_KEY }
     });
     var j = await r.json();
-    var record = Array.isArray(j.record) ? j.record : [];
+    var record = Array.isArray(j.record) ? j.record.filter(function(x){ return !x.__empty; }) : [];
     var snapshot = JSON.stringify(record);
     if(snapshot !== lastSnapshot){
       lastSnapshot = snapshot;
@@ -44,13 +44,16 @@ async function lv(){
 }
 
 // ─────────────────────────────────────────
-// JSONBin: save
+// JSONBin: сохраняем + подтверждаем
 // ─────────────────────────────────────────
 async function sv(){
   if(saving) return;
   saving = true;
+  saveConfirmed = false;
   try {
-    var body = JSON.stringify(chats);
+    // JSONBin не принимает пустой массив — добавляем плейсхолдер
+    var data = chats.length > 0 ? chats : [{"__empty":true}];
+    var body = JSON.stringify(data);
     await fetch(JSONBIN_URL, {
       method: 'PUT',
       headers: {
@@ -59,14 +62,20 @@ async function sv(){
       },
       body: body
     });
-    // upd
-    lastSnapshot = body;
+    // Читаем обратно чтобы убедиться что JSONBin сохранил именно это
+    var check = await fetch(JSONBIN_URL + '/latest', {
+      headers: { 'X-Master-Key': JSONBIN_KEY }
+    });
+    var jc = await check.json();
+    var confirmedRaw = Array.isArray(jc.record) ? jc.record.filter(function(x){ return !x.__empty; }) : [];
+    lastSnapshot = JSON.stringify(confirmedRaw);
+    saveConfirmed = true;
   } catch(e){ console.warn('write error:', e); }
   saving = false;
 }
 
 // ─────────────────────────────────────────
-// Polling very 3 sec
+// Polling каждые 3 секунды
 // ─────────────────────────────────────────
 async function poll(){
   if(!saving){
@@ -80,7 +89,7 @@ async function poll(){
 }
 
 // ─────────────────────────────────────────
-// utilit
+// УТИЛИТЫ
 // ─────────────────────────────────────────
 function ac(n){var h=0;for(var i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))&0xFFFFFF;return AV[Math.abs(h)%AV.length];}
 function ii(n){return n.trim().split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase()||'?';}
@@ -94,11 +103,13 @@ function tk(){
 setInterval(tk,15000); tk();
 
 // ─────────────────────────────────────────
-// list
+// СПИСОК ЧАТОВ
 // ─────────────────────────────────────────
 function rl(){
   var l=g('ec-cl'),e=g('ec-empty');
   l.innerHTML='';
+  // фильтруем битые записи — нужны только объекты с name и messages
+  chats = chats.filter(function(ch){ return ch && ch.name && Array.isArray(ch.messages); });
   if(!chats.length){e.style.display='flex';return;}
   e.style.display='none';
   chats.slice().reverse().forEach(function(ch,ri){
@@ -116,17 +127,17 @@ function rl(){
     item.addEventListener('click',(function(cid){return function(){oc(cid);};})(id));
     var db=document.createElement('button'); db.className='delbtn';
     db.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Delete';
-    db.addEventListener('click',(function(cid){return function(e){
+    db.addEventListener('click',(function(cid){return async function(e){
       e.stopPropagation();
       chats=chats.filter(function(c){return String(c.id)!==String(cid);});
-      sv(); rl();
+      await sv(); rl();
     };})(id));
     w.appendChild(item); w.appendChild(db); l.appendChild(w);
   });
 }
 
 // ─────────────────────────────────────────
-// open/close
+// ОТКРЫТЬ / ЗАКРЫТЬ ЧАТ
 // ─────────────────────────────────────────
 function oc(id){
   var ch=chats.filter(function(c){return String(c.id)===String(id);})[0];
@@ -148,7 +159,7 @@ function gb(){
 }
 
 // ─────────────────────────────────────────
-// sms
+// СООБЩЕНИЯ
 // ─────────────────────────────────────────
 function rm(){
   var a=g('ec-ma'),ch=chats.filter(function(c){return c.id===cur;})[0];
@@ -168,7 +179,7 @@ function ab(sender,text,time,on,ani){
 }
 
 // ─────────────────────────────────────────
-// sender
+// ОТПРАВИТЕЛЬ
 // ─────────────────────────────────────────
 function ss(s){
   ps=s;
@@ -187,7 +198,7 @@ g('ec-te').addEventListener('click',function(){sel('elio');});
 g('ec-to').addEventListener('click',function(){sel('other');});
 
 // ─────────────────────────────────────────
-// send
+// ОТПРАВКА
 // ─────────────────────────────────────────
 function sm(){
   var ta=g('ec-ta'),tx=ta.value.trim(); if(!tx)return; pt=tx;
@@ -222,7 +233,7 @@ g('ec-sb').addEventListener('click',sm);
 g('ec-back').addEventListener('click',gb);
 
 // ─────────────────────────────────────────
-// new chat
+// НОВЫЙ ЧАТ
 // ─────────────────────────────────────────
 g('ec-newbtn').addEventListener('click',function(){
   g('ec-ncn').value=''; g('ec-nm').classList.add('on');
@@ -277,7 +288,7 @@ g('ec-ecl').addEventListener('click',function(){ce();g('ec-ta').focus();});
 be();
 
 // ─────────────────────────────────────────
-// start
+// СТАРТ
 // ─────────────────────────────────────────
 async function init(){
   await lv();
